@@ -38,19 +38,19 @@ function runRequestQueue() {
 }
 
 
-function queue(reqPerSec, interval, numberOfRequests, cb) {
+function queue(reqPerTime, intervalTime, numberOfRequests, cb) {
 
     var count = 0;
     var interval = setInterval(
         function () {
-            for (var i = 0; i < reqPerSec; i++) {
+            for (var i = 0; i < reqPerTime; i++) {
                 cb()
             }
             if (count >= numberOfRequests) {
                 clearInterval(interval);
             }
             count++;
-        }, interval);
+        }, intervalTime);
 
 }
 
