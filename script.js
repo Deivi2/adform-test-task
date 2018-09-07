@@ -59,16 +59,14 @@ const taskTwo = (function () {
         urls.length && urls.length < 3 ?
             queue(5, 20, 1000, function () {
 
-                console.log(urls[+highPriorityReq])
-
-                // fetch(urls[+highPriorityReq])
-                //     .then(response => response.json())
-                //     .then(data => {
-                //         console.log(data)
-                //     })
-                //     .catch(err => {
-                //         console.log(err)
-                //     })
+                fetch(urls[+highPriorityReq])
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
             })
             : console.log('No URL or more then 2 urls added')
     };
