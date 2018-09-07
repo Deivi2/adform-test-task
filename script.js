@@ -30,7 +30,7 @@ function getStreetNames() {
 
 function runRequestQueue() {
 
-    queue(10, 1000, 100, function () {
+    queue(5, 1000, 100, function () {
 
         fetch('https://jsonplaceholder.typicode.com/todos/1')
             .then(response => response.json())
@@ -46,14 +46,14 @@ function runRequestQueue() {
 
 function queue(reqPerTime, intervalTime, numberOfRequests, cb) {
 
-    var count = 0;
+    let count = 0;
     var interval = setInterval(
         function () {
-            for (var i = 0; i < reqPerTime; i++) {
-                cb()
-            }
             if (count >= numberOfRequests) {
                 clearInterval(interval);
+            }
+            for (var i = 0; i < reqPerTime; i++) {
+                cb()
             }
             count++;
         }, intervalTime);
