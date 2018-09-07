@@ -28,38 +28,66 @@ function getStreetNames() {
 ////TASK 2
 
 
-function runRequestQueue() {
+const taskTwo = (function () {
 
-    queue(5, 1000, 100, function () {
+    let urls = [];
+    let highPriorityReq = false;
 
-        fetch('https://jsonplaceholder.typicode.com/todos/1')
-            .then(response => response.json())
-            .then(data => {
-                console.log(data)
+    function queue(reqPerTime, numberOfRequests, intervalTime, cb) {
+
+        let count = 1;
+        let interval = setInterval(
+            function () {
+                if (count >= numberOfRequests) {
+                    clearInterval(interval);
+                }
+                for (let i = 0; i < reqPerTime; i++) {
+                    if (urls.length > 1 && i >= 1) {
+                        highPriorityReq = true;
+                    }
+                    cb()
+                }
+                highPriorityReq = false;
+                count++;
+
+            }, intervalTime);
+    }
+
+
+    let runRequestQueue = function () {
+
+        urls.length ?
+            queue(5, 20, 1000, function () {
+
+                fetch(urls[+highPriorityReq])
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
             })
-            .catch(err => {
-                console.log(err)
-            })
-    })
-}
+            : console.log('No URL Added')
+    };
 
 
-function queue(reqPerTime, intervalTime, numberOfRequests, cb) {
+    let addRequestURL = function (value) {
+        urls.unshift(value)
+    };
 
-    let count = 0;
-    var interval = setInterval(
-        function () {
-            if (count >= numberOfRequests) {
-                clearInterval(interval);
-            }
-            for (var i = 0; i < reqPerTime; i++) {
-                cb()
-            }
-            count++;
-        }, intervalTime);
 
-}
+    return {
+        runRequestQueue: runRequestQueue,
+        addRequestURL: addRequestURL
+    }
 
+})();
 
 getStreetNames();
-runRequestQueue();
+taskTwo.addRequestURL('https://jsonplaceholder.typicode.com/todos/1');
+taskTwo.addRequestURL('https://jsonplaceholder.typicode.com/todos/2');
+taskTwo.runRequestQueue();
+
+
+
