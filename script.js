@@ -11,10 +11,16 @@ function getStreetNames() {
 
             data.features.forEach(function (data) {
                 console.log(data.properties.STREET)
-            })
+            });
+
+            const used = process.memoryUsage().heapUsed / 1024 / 1024;
+            console.log(`The request uses approximately ${used} MB`);
+
         })
         .catch(err => {
-            console.log('Data exceeds 16mb')
+            const used = process.memoryUsage().heapUsed / 1024 / 1024;
+            console.log(`Data exceeds 16mb, request uses approximately ${used} MB`);
+
         })
 }
 
@@ -24,7 +30,7 @@ function getStreetNames() {
 
 function runRequestQueue() {
 
-    queue(5, 1000, 100, function () {
+    queue(10, 1000, 100, function () {
 
         fetch('https://jsonplaceholder.typicode.com/todos/1')
             .then(response => response.json())
