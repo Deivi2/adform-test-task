@@ -32,16 +32,21 @@ const taskTwo = (function () {
 
     let urls = [];
     let highPriorityReq = false;
+    let values = {
+        reqPerTime: 0,
+        numberOfRequests: 0,
+        intervalTime: 0
+    };
 
-    function queue(reqPerTime, numberOfRequests, intervalTime, cb) {
+    function queue(values, cb) {
 
         let count = 1;
         let interval = setInterval(
             function () {
-                if (count >= numberOfRequests) {
+                if (count >= values.numberOfRequests) {
                     clearInterval(interval);
                 }
-                for (let i = 0; i < reqPerTime; i++) {
+                for (let i = 0; i < values.reqPerTime; i++) {
                     if (urls.length > 1 && i >= 1) {
                         highPriorityReq = true;
                     }
@@ -50,15 +55,14 @@ const taskTwo = (function () {
                 highPriorityReq = false;
                 count++;
 
-            }, intervalTime);
+            }, values.intervalTime);
     }
 
 
     let runRequestQueue = function () {
 
         urls.length && urls.length < 3 ?
-            queue(5, 20, 1000, function () {
-
+            queue(values, function () {
                 fetch(urls[+highPriorityReq])
                     .then(response => response.json())
                     .then(data => {
@@ -68,7 +72,7 @@ const taskTwo = (function () {
                         console.log(err)
                     })
             })
-            : console.log('No URL or more then 2 urls added')
+        : console.log('No URL or more then 2 URL\'s added')
     };
 
 
@@ -76,10 +80,15 @@ const taskTwo = (function () {
         urls.unshift(value)
     };
 
+    let setValues = function (reqPerTime, numberOfRequests, intervalTime) {
+        values = {reqPerTime, numberOfRequests, intervalTime};
+    };
+
 
     return {
         runRequestQueue: runRequestQueue,
-        addRequestURL: addRequestURL
+        addRequestURL: addRequestURL,
+        setValues: setValues
     }
 
 })();
@@ -87,6 +96,7 @@ const taskTwo = (function () {
 getStreetNames();
 taskTwo.addRequestURL('https://jsonplaceholder.typicode.com/todos/1');
 taskTwo.addRequestURL('https://jsonplaceholder.typicode.com/todos/2');
+taskTwo.setValues(5,20,1000);
 taskTwo.runRequestQueue();
 
 
