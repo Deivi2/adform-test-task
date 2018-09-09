@@ -5,7 +5,8 @@ const fetch = require('node-fetch');
 
 
 function getStreetNames() {
-    fetch('https://raw.githubusercontent.com/zemirco/sf-city-lots-json/master/citylots.json', {size: 16000000})
+
+    fetch('https://raw.githubusercontent.com/zemirco/sf-city-lots-json/master/citylots.json') //{size: 16000000} to set max limit
         .then(response => response.json())
         .then(data => {
 
