@@ -1,28 +1,24 @@
 const fetch = require('node-fetch');
-
+const request = require('request');
+const zlib = require('zlib');
+const JSONStream = require('JSONStream')
 
 ////TASK 1
 
 
 function getStreetNames() {
 
-    fetch('https://raw.githubusercontent.com/zemirco/sf-city-lots-json/master/citylots.json') //{size: 16000000} to set max limit
-        .then(response => response.json())
-        .then(data => {
+    var headers = {
+        'Accept-Encoding': 'gzip'
+    };
 
-            data.features.forEach(function (data) {
-                console.log(data.properties.STREET)
-            });
-
-            const used = process.memoryUsage().heapUsed / 1024 / 1024;
-            console.log(`The request uses approximately ${used} MB`);
-
+    request({url:'https://raw.githubusercontent.com/zemirco/sf-city-lots-json/master/citylots.json', 'headers': headers})
+        .pipe(zlib.createGunzip())
+        .pipe(JSONStream.parse('features.*'))
+        .on('data',function (chunk) {
+            console.log(chunk.properties.STREET)
         })
-        .catch(err => {
-            const used = process.memoryUsage().heapUsed / 1024 / 1024;
-            console.log(`Data exceeds 16mb, request uses approximately ${used} MB`);
 
-        })
 }
 
 
@@ -55,6 +51,7 @@ const taskTwo = (function () {
                 }
                 highPriorityReq = false;
                 count++;
+                console.log(count)
 
             }, values.intervalTime);
     }
@@ -97,7 +94,7 @@ const taskTwo = (function () {
 getStreetNames();
 taskTwo.addRequestURL('https://jsonplaceholder.typicode.com/todos/1');
 taskTwo.addRequestURL('https://jsonplaceholder.typicode.com/todos/2');
-taskTwo.setValues(5,20,1000);
+taskTwo.setValues(5,20, 1000);
 taskTwo.runRequestQueue();
 
 
